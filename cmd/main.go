@@ -27,5 +27,5 @@ func main() {
 }
 
 func getBooks(b *gin.Context) {
-	b.IndentedJSON(http.StatusOK, books)
+	b.JSON(http.StatusOK, books)
 }
