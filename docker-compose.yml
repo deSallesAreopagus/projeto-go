@@ -1,0 +1,13 @@
+services:
+  postgres-go:
+    image: postgres:latest
+    container_name: postgres-go
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_USER: postgres
+      POSTGRES_DB: books
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+    - 5432:5432
