@@ -2,7 +2,8 @@ package book
 
 import (
 	"net/http"
-	"projeto-go/pkg/models"
+	"projeto-go/api-rest/pkg/models"
+
 	"strconv"
 
 	"github.com/gin-gonic/gin"

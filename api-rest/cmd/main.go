@@ -2,8 +2,8 @@ package main
 
 import (
 	"log"
-	"projeto-go/pkg/database"
-	"projeto-go/pkg/router"
+	"projeto-go/api-rest/pkg/database"
+	"projeto-go/api-rest/pkg/router"
 
 	"github.com/joho/godotenv"
 )
@@ -18,5 +18,5 @@ func main() {
 
 	r := router.SetupRouter(db)
 
-	r.Run(":8550")
+	r.Run(":8000")
 }

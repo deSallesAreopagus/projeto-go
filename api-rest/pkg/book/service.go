@@ -1,7 +1,7 @@
 package book
 
 import (
-	"projeto-go/pkg/models"
+	"projeto-go/api-rest/pkg/models"
 
 	"gorm.io/gorm"
 )
