@@ -1,7 +1,7 @@
 package router
 
 import (
-	"projeto-go/pkg/book"
+	"projeto-go/api-rest/pkg/book"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"

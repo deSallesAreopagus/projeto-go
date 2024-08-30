@@ -1,0 +1,1 @@
+go run api-rest/cmd/main.go

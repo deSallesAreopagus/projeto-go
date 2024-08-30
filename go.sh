@@ -1,1 +1,0 @@
-go run cmd/projeto-go/main.go
