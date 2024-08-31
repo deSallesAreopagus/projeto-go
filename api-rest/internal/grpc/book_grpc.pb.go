@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.12.4
-// source: internal/grpc/book.proto
+// source: book.proto
 
 package grpc
 
@@ -269,5 +269,5 @@ var ApiBookService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "internal/grpc/book.proto",
+	Metadata: "book.proto",
 }

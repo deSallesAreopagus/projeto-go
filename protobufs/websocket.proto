@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = "internal/grpc;grpc";
+
+package grpc;
+
+service WebSocketService {
+  rpc BroadcastMessage(BroadcastRequest) returns (BroadcastResponse);
+}
+
+message BroadcastRequest {
+  string event = 1;
+  string data = 2;
+}
+
+message BroadcastResponse {
+  string status = 1;
+}
