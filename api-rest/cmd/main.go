@@ -20,6 +20,12 @@ func main() {
 		log.Fatalf("Error loading .env file")
 	}
 
+	err := book.InitWebSocketGRPCClient("localhost:50052")
+	if err != nil {
+		log.Fatalf("Failed to initialize WebSocket gRPC client: %v", err)
+	}
+	fmt.Println("Connected to gRPC client on port :50052...")
+
 	kafka.InitProducer("localhost:9092")
 	defer kafka.CloseProducer()
 
