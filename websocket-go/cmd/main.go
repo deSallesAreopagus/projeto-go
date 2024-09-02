@@ -13,13 +13,14 @@ import (
 )
 
 func main() {
+	webSocketServer := services.NewWebSocketServer()
+
 	go func() {
-		http.HandleFunc("/ws", handlers.WSHandler())
+		http.HandleFunc("/ws", handlers.WSHandler(webSocketServer))
 
 		log.Println("WebSocket server started on :8080")
 		log.Fatal(http.ListenAndServe(":8080", nil))
 	}()
-	webSocketServer := services.NewWebSocketServer()
 
 	grpcServer := g.NewServer()
 	grpc.RegisterWebSocketServiceServer(grpcServer, webSocketServer)
