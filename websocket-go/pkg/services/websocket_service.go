@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"websocket-go/internal/grpc"
 
@@ -20,6 +19,14 @@ func NewWebSocketServer() *WebSocketServer {
 	}
 }
 
+func (s *WebSocketServer) RegisterClient(conn *websocket.Conn) {
+	s.clients[conn] = struct{}{}
+}
+
+func (s *WebSocketServer) UnregisterClient(conn *websocket.Conn) {
+	delete(s.clients, conn)
+}
+
 func (s *WebSocketServer) BroadcastMessage(ctx context.Context, req *grpc.BroadcastRequest) (*grpc.BroadcastResponse, error) {
 	if len(s.clients) == 0 {
 		log.Printf("No clients connected. Clients: %v", s.clients)
@@ -28,11 +35,12 @@ func (s *WebSocketServer) BroadcastMessage(ctx context.Context, req *grpc.Broadc
 
 	message := req.GetData()
 
+	log.Print("Clientes conectados: ", len(s.clients))
 	for client := range s.clients {
 		err := client.WriteMessage(websocket.TextMessage, []byte(message))
 		if err != nil {
 			log.Printf("Failed to send message to client: %v", err)
-
+			s.UnregisterClient(client)
 		}
 	}
 
@@ -42,7 +50,7 @@ func (s *WebSocketServer) BroadcastMessage(ctx context.Context, req *grpc.Broadc
 func HandleMessage(message string) string {
 	response := "Message sent: " + message
 
-	fmt.Printf("Message sent: %s\n", message)
+	log.Printf("Message sent: %s\n", message)
 
 	return response
 }

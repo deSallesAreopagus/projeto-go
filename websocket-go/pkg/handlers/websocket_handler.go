@@ -3,13 +3,10 @@ package handlers
 import (
 	"log"
 	"net/http"
-
 	"websocket-go/pkg/services"
 
 	"github.com/gorilla/websocket"
 )
-
-var clients = make(map[*websocket.Conn]struct{})
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -17,7 +14,7 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func WSHandler() http.HandlerFunc {
+func WSHandler(server *services.WebSocketServer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
@@ -25,15 +22,15 @@ func WSHandler() http.HandlerFunc {
 			return
 		}
 
-		clients[conn] = struct{}{}
+		server.RegisterClient(conn)
 
-		go listenToClient(conn)
+		go listenToClient(server, conn)
 	}
 }
 
-func listenToClient(conn *websocket.Conn) {
+func listenToClient(server *services.WebSocketServer, conn *websocket.Conn) {
 	defer func() {
-		delete(clients, conn)
+		server.UnregisterClient(conn)
 		conn.Close()
 	}()
 
