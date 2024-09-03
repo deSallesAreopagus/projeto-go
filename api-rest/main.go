@@ -4,29 +4,32 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	pb "projeto-go/api-rest/internal/grpc"
 	"projeto-go/api-rest/pkg/book"
 	"projeto-go/api-rest/pkg/database"
 	"projeto-go/api-rest/pkg/kafka"
 	"projeto-go/api-rest/pkg/router"
 
-	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 )
 
 func main() {
-
-	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Error loading .env file")
+	websocketString := os.Getenv("WEBSOCKET_STRING")
+	if websocketString == "" {
+		websocketString = "localhost:50052"
 	}
-
-	err := book.InitWebSocketGRPCClient("localhost:50052")
+	err := book.InitWebSocketGRPCClient(websocketString)
 	if err != nil {
 		log.Fatalf("Failed to initialize WebSocket gRPC client: %v", err)
 	}
 	fmt.Println("Connected to gRPC client on port :50052...")
 
-	kafka.InitProducer("localhost:9092")
+	kafkaBroker := os.Getenv("KAFKA_BROKER")
+	if kafkaBroker == "" {
+		kafkaBroker = "localhost:9092"
+	}
+	kafka.InitProducer(kafkaBroker)
 	defer kafka.CloseProducer()
 
 	db := database.SetupDBConnection()

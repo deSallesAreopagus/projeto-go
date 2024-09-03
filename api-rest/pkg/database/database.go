@@ -5,7 +5,6 @@ import (
 	"os"
 	"projeto-go/api-rest/pkg/models"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -13,22 +12,8 @@ import (
 var DB *gorm.DB
 
 func SetupDBConnection() *gorm.DB {
-	e := godotenv.Load("../../.env")
-	if e != nil {
 
-		e := godotenv.Load()
-		if e != nil {
-			log.Fatalf("Error loading .env file")
-		}
-	}
-	dsn := "host=" + os.Getenv("DB_HOST") +
-		" user=" + os.Getenv("DB_USER") +
-		" password=" + os.Getenv("DB_PASSWORD") +
-		" dbname=" + os.Getenv("DB_NAME") +
-		" port=" + os.Getenv("DB_PORT") +
-		" sslmode=disable"
-
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}

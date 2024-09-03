@@ -1,1 +1,2 @@
-go run api-rest/cmd/main.go
+cd api-rest
+go run cmd/main.go
