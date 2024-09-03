@@ -10,4 +10,68 @@ services:
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
     ports:
-    - 5432:5432
+      - 5432:5432
+    networks:
+      - go-network
+  
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    ports:
+      - "2181:2181"
+    container_name: zookeeper
+    networks:
+      - go-network
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+    container_name: kafka
+    networks:
+      - go-network
+  
+  projeto-go:
+    build:
+      context: ./api-rest
+      dockerfile: Dockerfile
+    container_name: projeto-go
+    restart: always
+    ports:
+      - 8000:8000
+      - 50051:50051
+    environment:
+      WEBSOCKET_STRING: websocket-go:50052
+      DATABASE_URL: postgres://postgres:1234@postgres-go:5432/books?sslmode=disable
+      GIN_MODE: release
+      KAFKA_BROKER: kafka:9092
+    depends_on:
+      - postgres-go
+      - kafka
+      - websocket-go
+    networks:
+      - go-network
+
+  websocket-go:
+    build:
+      context: ./websocket-go
+      dockerfile: Dockerfile
+    container_name: websocket-go
+    restart: always
+    ports:
+      - 8080:8080
+      - 50052:50052
+    environment:
+      GIN_MODE: release
+    networks:
+      - go-network
+
+networks:
+  go-network:
+    driver: bridge
